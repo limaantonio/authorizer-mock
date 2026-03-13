@@ -1,0 +1,65 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Container que estamos detalhando
+Container_Boundary(auth_engine, "Authorization Engine") {
+
+    Component(iso_parser, "ISO Parser", "Go", "Faz o parse da mensagem ISO8583")
+
+    Component(pre_auth_validator, "Pre-Auth Validator", "Go", "Valida regras iniciais da transação")
+
+    Component(rule_engine, "Rule Engine", "Go", "Executa regras de autorização")
+
+    Component(account_client, "Account Client", "HTTP Client", "Consulta dados da conta e cartão")
+
+    Component(fraud_client, "Fraud Client", "HTTP Client", "Consulta serviço antifraude")
+
+    Component(ledger_client, "Ledger Client", "HTTP Client", "Consulta saldo no ledger")
+
+    Component(auth_processor, "Authorization Processor", "Go", "Decide approve ou deny")
+
+    Component(auth_repository, "Authorization Repository", "Repository", "Persiste autorização")
+
+    Component(clearing_publisher, "Clearing Publisher", "Kafka/RabbitMQ Producer", "Publica transação para clearing")
+
+}
+
+' Sistemas externos
+
+System_Ext(account_service, "Account Service")
+System_Ext(fraud_service, "Anti-Fraud Service")
+System_Ext(ledger_service, "Ledger Service")
+System_Ext(clearing_service, "Clearing Service")
+
+ContainerDb(auth_db, "Authorization Database", "PostgreSQL")
+
+' Relacionamentos internos
+
+Rel(iso_parser, pre_auth_validator, "envia dados da transação")
+
+Rel(pre_auth_validator, rule_engine, "transação validada")
+
+Rel(rule_engine, account_client, "consulta conta")
+
+Rel(rule_engine, fraud_client, "consulta antifraude")
+
+Rel(rule_engine, ledger_client, "consulta saldo")
+
+Rel(account_client, account_service, "HTTP")
+
+Rel(fraud_client, fraud_service, "HTTP")
+
+Rel(ledger_client, ledger_service, "HTTP")
+
+Rel(rule_engine, auth_processor, "resultado das validações")
+
+Rel(auth_processor, auth_repository, "salva autorização")
+
+Rel(auth_repository, auth_db, "SQL")
+
+Rel(auth_processor, clearing_publisher, "transação aprovada")
+
+Rel(clearing_publisher, clearing_service, "publica evento")
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+
+' importa a biblioteca C4 para container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' define o sistema principal
+System_Boundary(authorization_system, "Authorization System") {
+
+    Container(iso_listener, "ISO Listener", "Go Service", "Recebe mensagens ISO8583 da bandeira")
+
+    Container(auth_engine, "Authorization Engine", "Go Service", "Executa regras de autorização")
+
+    ContainerDb(auth_db, "Authorization Database", "PostgreSQL", "Armazena autorizações aprovadas/negadas")
+
+}
+
+' sistemas externos
+System_Ext(card_network, "Card Network", "Bandeira envia mensagens ISO8583")
+
+System_Ext(account_service, "Account Service", "Dados de conta e cartão")
+
+System_Ext(fraud_service, "Anti-Fraud Service", "Serviço de antifraude")
+
+System_Ext(ledger_service, "Ledger Service", "Controle de saldo")
+
+System_Ext(clearing_service, "Clearing Service", "Processa clearing das transações")
+
+' relacionamentos
+
+Rel(card_network, iso_listener, "ISO8583 message")
+
+Rel(iso_listener, auth_engine, "Envio da transação")
+
+Rel(auth_engine, account_service, "Consulta dados da conta")
+
+Rel(auth_engine, fraud_service, "Consulta antifraude")
+
+Rel(auth_engine, ledger_service, "Consulta saldo")
+
+Rel(auth_engine, auth_db, "Grava autorização")
+
+Rel(auth_engine, clearing_service, "Publica transação aprovada")
+
+@enduml

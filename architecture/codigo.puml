@@ -1,0 +1,92 @@
+@startuml
+
+package "authorization" {
+
+class AuthorizationService {
+    +Authorize(request AuthorizationRequest) AuthorizationResponse
+}
+
+class ISOParser {
+    +ParseISO(message []byte) AuthorizationRequest
+}
+
+class RuleEngine {
+    +Validate(request AuthorizationRequest) bool
+}
+
+class AuthorizationProcessor {
+    +Process(request AuthorizationRequest) AuthorizationResponse
+}
+
+class AuthorizationRepository {
+    +Save(auth Authorization)
+}
+
+class ClearingPublisher {
+    +Publish(auth Authorization)
+}
+
+}
+
+package "clients" {
+
+class AccountClient {
+    +GetAccount(cardNumber string) Account
+}
+
+class FraudClient {
+    +CheckFraud(request AuthorizationRequest) FraudResult
+}
+
+class LedgerClient {
+    +CheckBalance(accountId string, amount float) bool
+}
+
+}
+
+package "domain" {
+
+class AuthorizationRequest {
+    cardNumber
+    amount
+    mcc
+    merchantId
+}
+
+class AuthorizationResponse {
+    approved
+    responseCode
+}
+
+class Authorization {
+    id
+    amount
+    status
+}
+
+class Account {
+    id
+    status
+    limit
+}
+
+class FraudResult {
+    score
+    approved
+}
+
+}
+
+ISOParser --> AuthorizationService
+
+AuthorizationService --> RuleEngine
+AuthorizationService --> AuthorizationProcessor
+
+AuthorizationProcessor --> AccountClient
+AuthorizationProcessor --> FraudClient
+AuthorizationProcessor --> LedgerClient
+
+AuthorizationProcessor --> AuthorizationRepository
+AuthorizationProcessor --> ClearingPublisher
+
+@enduml

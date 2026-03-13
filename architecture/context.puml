@@ -1,0 +1,26 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person_Ext(network, "Card Network", "Bandeira envia mensagem ISO capturada no POS")
+
+System(authorizer, "Card Authorization System", "Responsável por validar regras e autorizar transações")
+
+System_Ext(account, "Account Service", "Dados de conta e cartão")
+
+System_Ext(ledger, "Ledger Service", "Saldo e registro financeiro")
+
+System_Ext(antifraud, "Anti-Fraud Service", "Motor antifraude")
+
+System_Ext(clearing, "Clearing Service", "Processamento de clearing das transações")
+
+System_Ext(authdb, "Authorization Database", "Base de autorizações aprovadas")
+
+Rel(network, authorizer, "Envia mensagem ISO 8583")
+
+Rel(authorizer, account, "Consulta dados da conta/cartão")
+Rel(authorizer, ledger, "Consulta saldo")
+Rel(authorizer, antifraud, "Consulta risco de fraude")
+
+Rel(authorizer, authdb, "Grava autorização")
+
+Rel(authorizer, clearing, "Envia evento de autorização")
