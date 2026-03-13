@@ -47,7 +47,7 @@ Os diagramas estão em `/architecture` no formato PlantUML. Para visualizá-los,
 
 > Mostra os atores externos e sistemas com os quais o autorizador se relaciona.
 
-![C4 Context](architecture/context.puml)
+![C4 Context](architecture/context.png)
 
 ```plantuml
 ' architecture/context.puml
@@ -66,7 +66,7 @@ System_Ext(authdb, "Authorization Database")
 
 > Detalha os containers (processos/serviços) dentro do sistema de autorização.
 
-![C4 Container](architecture/container.puml)
+![C4 Container](architecture/container.png)
 
 ```
 Authorization System
@@ -83,7 +83,7 @@ Sistemas externos: Account Service, Anti-Fraud Service, Ledger Service, Clearing
 
 > Detalha os componentes internos do Authorization Engine.
 
-![C4 Component](architecture/component.puml)
+![C4 Component](architecture/component.png)
 
 ```
 Authorization Engine
@@ -104,7 +104,7 @@ Authorization Engine
 
 > Diagrama de classes das principais entidades do domínio e seus relacionamentos.
 
-![C4 Code](architecture/codigo.puml)
+![C4 Code](architecture/codigo.png)
 
 ```
 authorization
